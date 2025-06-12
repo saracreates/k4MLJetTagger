@@ -85,6 +85,13 @@ MyFastJetProcessor.Parameters = {
     "recombinationScheme": ["E_scheme"],
     "storeParticlesInJets": ["true"],
 }
+from Configurables import EDM4hep2LcioTool
+lcioConvTool = EDM4hep2LcioTool("EDM4hep2lcio")
+lcioConvTool.convertAll = False
+lcioConvTool.collNameMapping = {
+    "PandoraPFOs": "PandoraPFOs",
+}
+MyFastJetProcessor.EDM4hep2LcioTool = lcioConvTool
 
 algList.append(MyFastJetProcessor)
 
