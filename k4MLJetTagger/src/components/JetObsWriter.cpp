@@ -81,6 +81,8 @@ StatusCode JetObsWriter::execute(const EventContext&) const {
   for (const auto& jet : jet_coll) { // loop over all jets in the event
     cleanTree();
     Jet j = retriever->retrieve_input_observables(jet, prim_vertex_coll); // get all observables
+    // debug () << "Writing " << j.constituents.size() << " constituents..."<< endmsg;
+    int ind_const = 0;
     for (const auto& pfc : j.constituents) {                              // loop over all jet constituents / pfcands
       pfcand_erel_log->push_back(pfc.pfcand_erel_log);
       pfcand_thetarel->push_back(pfc.pfcand_thetarel);
@@ -119,6 +121,9 @@ StatusCode JetObsWriter::execute(const EventContext&) const {
       pfcand_Sip3dSig->push_back(pfc.pfcand_Sip3dSig);
       pfcand_JetDistVal->push_back(pfc.pfcand_JetDistVal);
       pfcand_JetDistSig->push_back(pfc.pfcand_JetDistSig);
+      // debug() << "Writing constituent " << ind_const << endmsg;
+      // pfc.print_values();
+      ind_const++;
     }
     // PV variables
     const edm4hep::Vector3f prim_vertex = retriever->get_primary_vertex(prim_vertex_coll);
