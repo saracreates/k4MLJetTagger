@@ -38,6 +38,7 @@ DECLARE_COMPONENT(JetObsWriter)
 JetObsWriter::JetObsWriter(const std::string& name, ISvcLocator* svcLoc) : Gaudi::Algorithm(name, svcLoc) {
   declareProperty("InputJets", inputJets_handle, "Collection for input Jets");
   declareProperty("InputPrimaryVertices", inputPrimaryVertices_handle, "Collection for input Primary Vertices");
+  declareProperty("PFOs", pfo_handle, "Particle Flow Objects (PFOs) collection");
 }
 
 StatusCode JetObsWriter::initialize() {
@@ -74,15 +75,16 @@ StatusCode JetObsWriter::execute(const EventContext&) const {
   // Get the pointers to the collections
   const edm4hep::ReconstructedParticleCollection* jet_coll_ptr = inputJets_handle.get();
   const edm4hep::VertexCollection* prim_vertex_coll_ptr = inputPrimaryVertices_handle.get();
+  const edm4hep::ReconstructedParticleCollection* pfo_coll_ptr = pfo_handle.get();
   // Create references to the collections
   const edm4hep::ReconstructedParticleCollection& jet_coll = *jet_coll_ptr;
   const edm4hep::VertexCollection& prim_vertex_coll = *prim_vertex_coll_ptr;
+  const edm4hep::ReconstructedParticleCollection& pfo_coll = *pfo_coll_ptr;
 
   for (const auto& jet : jet_coll) { // loop over all jets in the event
     cleanTree();
     Jet j = retriever->retrieve_input_observables(jet, prim_vertex_coll); // get all observables
     // debug () << "Writing " << j.constituents.size() << " constituents..."<< endmsg;
-    int ind_const = 0;
     for (const auto& pfc : j.constituents) {                              // loop over all jet constituents / pfcands
       pfcand_erel_log->push_back(pfc.pfcand_erel_log);
       pfcand_thetarel->push_back(pfc.pfcand_thetarel);
@@ -121,15 +123,14 @@ StatusCode JetObsWriter::execute(const EventContext&) const {
       pfcand_Sip3dSig->push_back(pfc.pfcand_Sip3dSig);
       pfcand_JetDistVal->push_back(pfc.pfcand_JetDistVal);
       pfcand_JetDistSig->push_back(pfc.pfcand_JetDistSig);
-      // debug() << "Writing constituent " << ind_const << endmsg;
-      // pfc.print_values();
-      ind_const++;
     }
     // PV variables
     const edm4hep::Vector3f prim_vertex = retriever->get_primary_vertex(prim_vertex_coll);
     jet_PV_x = prim_vertex.x;
     jet_PV_y = prim_vertex.y;
     jet_PV_z = prim_vertex.z;
+
+    n_pfos = pfo_coll.size();
 
     t_jetcst->Fill();
   }
@@ -219,6 +220,10 @@ void JetObsWriter::initializeTree() {
   t_jetcst->Branch("jet_PV_y", &jet_PV_y);
   t_jetcst->Branch("jet_PV_z", &jet_PV_z);
 
+  // debug
+
+  t_jetcst->Branch("n_pfos", &n_pfos);
+
   return;
 }
 
@@ -265,6 +270,8 @@ void JetObsWriter::cleanTree() const {
   jet_PV_x = dummy_value;
   jet_PV_y = dummy_value;
   jet_PV_z = dummy_value;
+
+  n_pfos = 0;
 
   return;
 }

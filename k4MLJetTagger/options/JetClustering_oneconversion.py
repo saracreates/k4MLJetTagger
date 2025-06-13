@@ -30,7 +30,7 @@ from k4FWCore.parseArgs import parser
 
 
 # parse the custom arguments
-parser_group = parser.add_argument_group("createJetTags.py custom options")
+parser_group = parser.add_argument_group("JetClustering.py custom options")
 parser_group.add_argument("--inputFiles", nargs="+", metavar=("file1", "file2"), help="One or multiple input files",
                         default=["/eos/experiment/fcc/prod/fcc/ee/test_spring2024/240gev/Hbb/CLD_o2_v05/rec/00016783/000/Hbb_rec_16783_99.root"])
 parser_group.add_argument("--outputFile", help="Output file name", default="output_jettags.root")
@@ -62,22 +62,27 @@ MyFastJetProcessor.Parameters = {
     "recombinationScheme": ["E_scheme"],
     "storeParticlesInJets": ["true"],
 }
+# conversion from EDM4hep to LCIO
+from Configurables import EDM4hep2LcioTool
+lcioConvTool2 = EDM4hep2LcioTool("EDM4hep2Lcio")
+lcioConvTool2.convertAll  = False
+lcioConvTool2.collNameMapping = {
+    "PandoraPFOs": "PandoraPFOs",
+    # "MCParticles": "MCParticle",
+}
+lcioConvTool2.OutputLevel = DEBUG
+MyFastJetProcessor.EDM4hep2LcioTool = lcioConvTool2
 # conversion from LCIO to EDM4hep
 from Configurables import Lcio2EDM4hepTool
 lcioConvTool = Lcio2EDM4hepTool("lcio2EDM4hep")
-lcioConvTool.convertAll = False
+lcioConvTool.convertAll  = False
 lcioConvTool.collNameMapping = {
     "PandoraPFOs": "PandoraPFOs",
+    # "MCParticle": "MCParticles",
 }
+lcioConvTool.OutputLevel = DEBUG
 MyFastJetProcessor.Lcio2EDM4hepTool = lcioConvTool
-# conversion from EDM4hep to LCIO
-from Configurables import EDM4hep2LcioTool
-lcioConvTool2 = EDM4hep2LcioTool("EDM4hep2lcio")
-lcioConvTool2.convertAll = False
-lcioConvTool2.collNameMapping = {
-    "PandoraPFOs": "PandoraPFOs",
-}
-MyFastJetProcessor.EDM4hep2LcioTool = lcioConvTool2
+
 
 algList.append(MyFastJetProcessor)
 

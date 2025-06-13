@@ -85,13 +85,26 @@ MyFastJetProcessor.Parameters = {
     "recombinationScheme": ["E_scheme"],
     "storeParticlesInJets": ["true"],
 }
+# conversion from EDM4hep to LCIO
 from Configurables import EDM4hep2LcioTool
-lcioConvTool = EDM4hep2LcioTool("EDM4hep2lcio")
-lcioConvTool.convertAll = False
+lcioConvTool2 = EDM4hep2LcioTool("EDM4hep2Lcio")
+lcioConvTool2.convertAll  = False 
+lcioConvTool2.collNameMapping = {
+    "PandoraPFOs": "PandoraPFOs",
+    # "MCParticles": "MCParticle",
+}
+lcioConvTool2.OutputLevel = DEBUG
+MyFastJetProcessor.EDM4hep2LcioTool = lcioConvTool2
+# conversion from LCIO to EDM4hep
+from Configurables import Lcio2EDM4hepTool
+lcioConvTool = Lcio2EDM4hepTool("lcio2EDM4hep")
+lcioConvTool.convertAll  = False 
 lcioConvTool.collNameMapping = {
     "PandoraPFOs": "PandoraPFOs",
+    # "MCParticle": "MCParticles",
 }
-MyFastJetProcessor.EDM4hep2LcioTool = lcioConvTool
+lcioConvTool.OutputLevel = DEBUG
+MyFastJetProcessor.Lcio2EDM4hepTool = lcioConvTool
 
 algList.append(MyFastJetProcessor)
 

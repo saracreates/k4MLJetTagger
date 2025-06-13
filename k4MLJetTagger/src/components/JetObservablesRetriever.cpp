@@ -31,8 +31,8 @@ Jet JetObservablesRetriever::retrieve_input_observables(const edm4hep::Reconstru
 
   // loop over all jet constituents and retrieve 33 input features to the network
   int ind_const = 0;
-  std::cout << "JetObservablesRetriever: retrieving observables for jet with " << jet.getParticles().size()
-            << " constituents" << std::endl;
+  // std::cout << "JetObservablesRetriever: retrieving observables for jet with " << jet.getParticles().size()
+  //           << " constituents" << std::endl;
   for (const auto& particle : jet.getParticles()) {
     // create a particle object
     Pfcand p;
@@ -68,10 +68,11 @@ Jet JetObservablesRetriever::retrieve_input_observables(const edm4hep::Reconstru
     }
     //std::cout << "Adding particle " << ind_const << " to jet" << std::endl;
     // p.print_values();
-    std::cout << ind_const << "\t" << p.pfcand_p << std::endl;
+    // std::cout << ind_const << "\t" << p.pfcand_p << std::endl;
     // add the pfcand to the jet
     j.constituents.push_back(p);
     ind_const++;
+    
   }
 
   return j;

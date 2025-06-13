@@ -111,6 +111,7 @@ private:
                                                                                 this};
   mutable DataHandle<edm4hep::VertexCollection> inputPrimaryVertices_handle{"InputPrimaryVertices",
                                                                             Gaudi::DataHandle::Reader, this};
+  mutable DataHandle<edm4hep::ReconstructedParticleCollection> pfo_handle{"PFOs", Gaudi::DataHandle::Reader, this};
 
   mutable JetObservablesRetriever* retriever;
 
@@ -162,6 +163,7 @@ private:
   mutable int jet_PV_id;
 
   mutable std::int32_t evNum;
+  mutable std::int32_t n_pfos; ///< Number of PFOs in the jet
 };
 
 #endif // JETOBSWRITER_H

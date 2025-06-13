@@ -42,8 +42,9 @@ algList = []
 # retrieve jet constituent observables for tagging
 
 MyJetObsWriter = JetObsWriter("MyJetObsWriter")
-MyJetObsWriter.InputJets = "RefinedVertexJets"
+MyJetObsWriter.InputJets = "VertexJets"
 MyJetObsWriter.InputPrimaryVertices = "PrimaryVertices"
+MyJetObsWriter.PFOs = "PandoraPFOs"
 # define root output file
 THistSvc().Output =["rec DATAFILE='{}' TYP='ROOT' OPT='RECREATE'".format(args.outputFile)]
 THistSvc().OutputLevel = WARNING
